@@ -1,107 +1,470 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Screen</title>
+    <title>TON DEX - Gateway</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        * {
+        :root {
+            --primary-dark: #006D77;
+            --primary-medium: #1A6E7A;
+            --primary-light: #83C5BE;
+            --accent-color: #FFDDD2;
+            --text-light: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #000;
-            background-image: url('https://i.suar.me/1AqeX/l');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: #fff;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            text-align: center;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            box-sizing: border-box;
             position: relative;
+            animation: fadeIn 1s ease-out;
         }
-        .container {
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            animation: fadeIn 1s ease-in-out;
-            z-index: 1;
-            margin-bottom: auto;
-        }
-        .loader {
-            position: absolute;
-            bottom: 60px;
-            width: 90%;
-            max-width: 400px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-            border-radius: 2px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-        .progress {
-            height: 100%;
-            background: #ffffff;
-            width: 0;
-            transition: width 5s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
+
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .logo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin-bottom: 30px;
-            object-fit: contain;
+        
+        /* TON DEX Logo */
+        .ton-dex-logo {
+            margin-bottom: 40px;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .ton-dex-logo .main-logo {
+            display: inline-block;
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: logoGlow 2s infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(255, 221, 210, 0.3)); }
+            100% { filter: drop-shadow(0 0 15px rgba(255, 221, 210, 0.6)); }
+        }
+        
+        .ton-dex-logo .main-logo::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            animation: lineExpand 1.5s ease-out;
+        }
+
+        @keyframes lineExpand {
+            from { width: 0; opacity: 0; }
+            to { width: 100%; opacity: 1; }
+        }
+        
+        .ton-dex-logo .tagline {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+        
+        /* TON Coin Partnership */
+        .ton-partnership {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
             padding: 15px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+        }
+
+        .ton-partnership:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .ton-partnership img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            animation: coinSpin 8s linear infinite;
+        }
+
+        @keyframes coinSpin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .ton-partnership span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Loading Bar */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 30px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-light));
+            border-radius: 4px;
+            transition: width 0.1s linear;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.3) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .loading-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            animation: loadingPulse 1.4s infinite ease-in-out;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes loadingPulse {
+            0%, 60%, 100% { transform: scale(0.6); opacity: 0.5; }
+            30% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Particle Effects */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Floating TON coins */
+        .floating-coins {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .ton-coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('https://ton.org/download/ton_symbol.png') center/contain no-repeat;
+            opacity: 0.15;
+            animation: floatCoin linear infinite;
+        }
+
+        @keyframes floatCoin {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* Connection nodes animation */
+        .connection-nodes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .connection-line {
+            position: absolute;
+            background: rgba(255, 221, 210, 0.1);
+            height: 1px;
+            transform-origin: left center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Circular logo -->
-        <img src="https://i.suar.me/npWAw/l" alt="Logo" class="logo">
+    <div class="particles" id="particles"></div>
+    <div class="floating-coins" id="floatingCoins"></div>
+    <div class="connection-nodes" id="connectionNodes"></div>
+    
+    <div class="login-container">
+        <!-- TON DEX Logo -->
+        <div class="ton-dex-logo">
+            <div class="main-logo">TON DEX</div>
+            <div class="tagline">Advanced Decentralized Exchange Platform</div>
+        </div>
+        
+        <!-- TON Coin Partnership -->
+        <div class="ton-partnership">
+            <img src="https://ton.org/download/ton_symbol.png" alt="TON Coin">
+            <span>Launch of TDX on the TON Network</span>
+        </div>
+        
+        <!-- Loading Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="loading-text" id="loadingText">
+            <span>Initializing blockchain connection</span>
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
     </div>
     
-    <div class="loader">
-        <div class="progress"></div>
-    </div>
-
     <script>
-        // Start loading bar animation
-        document.addEventListener('DOMContentLoaded', function() {
-            const progressBar = document.querySelector('.progress');
+        document.addEventListener("DOMContentLoaded", function() {
+            // Create particle effects
+            createParticles();
+            createFloatingCoins();
+            createConnectionNodes();
             
-            let width = 0;
-            const interval = setInterval(function() {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    setTimeout(function() {
-                        window.location.href = 'https://piswap362.github.io/TonDex_Home/';
-                    }, 300);
-                } else {
-                    width++;
-                    progressBar.style.width = width + '%';
+            // Loading bar animation
+            const progressBar = document.getElementById('progressBar');
+            const loadingText = document.getElementById('loadingText');
+            const duration = 8000; // 8 seconds
+            
+            // Dynamic loading messages
+            const messages = [
+                "Initializing blockchain connection",
+                "Syncing with TON network",
+                "Loading smart contracts",
+                "Verifying node connections",
+                "Preparing exchange interface"
+            ];
+            
+            let currentMessage = 0;
+            const messageInterval = duration / messages.length;
+            
+            let start = null;
+            const animateProgress = (timestamp) => {
+                if (!start) start = timestamp;
+                const progress = Math.min((timestamp - start) / duration, 1);
+                progressBar.style.width = (progress * 100) + '%';
+                
+                // Update loading message
+                if (progress > (currentMessage + 1) / messages.length) {
+                    currentMessage = Math.floor(progress * messages.length);
+                    loadingText.querySelector('span').textContent = messages[currentMessage];
                 }
-            }, 50);
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(animateProgress);
+                } else {
+                    // Redirect to next page after completion
+                    loadingText.querySelector('span').textContent = "Redirecting to platform...";
+                    setTimeout(() => {
+                        window.location.href = "https://piswap362.github.io/TonDex_Home/";
+                    }, 500);
+                }
+            };
+            
+            window.requestAnimationFrame(animateProgress);
+            
+            // Particle creation function
+            function createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                const particleCount = 20;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Random sizes
+                    const size = Math.random() * 8 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Random positions
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    // Random durations and delays
+                    const duration = Math.random() * 20 + 10;
+                    const delay = Math.random() * 5;
+                    particle.style.animation = `float ${duration}s linear ${delay}s infinite`;
+                    
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            // Create floating TON coins
+            function createFloatingCoins() {
+                const container = document.getElementById('floatingCoins');
+                const coinCount = 8;
+                
+                for (let i = 0; i < coinCount; i++) {
+                    const coin = document.createElement('div');
+                    coin.classList.add('ton-coin');
+                    
+                    // Random sizes
+                    const size = Math.random() * 20 + 15;
+                    coin.style.width = `${size}px`;
+                    coin.style.height = `${size}px`;
+                    
+                    // Random positions
+                    coin.style.left = `${Math.random() * 100}%`;
+                    
+                    // Random durations and delays
+                    const duration = Math.random() * 30 + 20;
+                    const delay = Math.random() * 10;
+                    coin.style.animation = `floatCoin ${duration}s linear ${delay}s infinite`;
+                    
+                    container.appendChild(coin);
+                }
+            }
+
+            // Create connection nodes and lines
+            function createConnectionNodes() {
+                const container = document.getElementById('connectionNodes');
+                const nodeCount = 15;
+                const nodes = [];
+                
+                // Create nodes
+                for (let i = 0; i < nodeCount; i++) {
+                    const node = document.createElement('div');
+                    node.classList.add('node');
+                    
+                    // Random positions
+                    const left = Math.random() * 100;
+                    const top = Math.random() * 100;
+                    node.style.left = `${left}%`;
+                    node.style.top = `${top}%`;
+                    
+                    nodes.push({element: node, x: left, y: top});
+                    container.appendChild(node);
+                }
+                
+                // Create connections between nearby nodes
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const distance = Math.sqrt(
+                            Math.pow(nodes[i].x - nodes[j].x, 2) + 
+                            Math.pow(nodes[i].y - nodes[j].y, 2)
+                        );
+                        
+                        if (distance < 30) { // Only connect nearby nodes
+                            const line = document.createElement('div');
+                            line.classList.add('connection-line');
+                            
+                            const angle = Math.atan2(
+                                nodes[j].y - nodes[i].y, 
+                                nodes[j].x - nodes[i].x
+                            ) * 180 / Math.PI;
+                            
+                            const length = distance;
+                            
+                            line.style.width = `${length}%`;
+                            line.style.left = `${nodes[i].x}%`;
+                            line.style.top = `${nodes[i].y}%`;
+                            line.style.transform = `rotate(${angle}deg)`;
+                            line.style.opacity = 0.5 - (distance / 60);
+                            
+                            container.appendChild(line);
+                        }
+                    }
+                }
+            }
         });
     </script>
 </body>
